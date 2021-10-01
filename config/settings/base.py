@@ -8,8 +8,8 @@ from datetime import timedelta
 
 ROOT_DIR = (
     environ.Path(__file__) - 3
-)  # (django_synergy/config/settings/base.py - 3 = django_synergy/)
-APPS_DIR = ROOT_DIR.path("django_synergy")
+)  # (django_app/config/settings/base.py - 3 = django_app/)
+APPS_DIR = ROOT_DIR.path("django_app")
 
 env = environ.Env()
 
@@ -44,7 +44,7 @@ LOCALE_PATHS = [ROOT_DIR.path("locale")]
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres://synergy:synergy@localhost:5432/synergy'),
+    'default': env.db('DATABASE_URL', default='postgres://db@localhost:5432/app'),
 }
 DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
@@ -91,19 +91,11 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     # Your stuff: custom apps go here
-    "django_synergy.users.apps.UsersConfig",
-    "django_synergy.utils.apps.UtilsConfig",
-    "django_synergy.accounts.apps.AccountsConfig",
-    "django_synergy.devices.apps.DevicesConfig",
-    "django_synergy.notifications.apps.NotificationsConfig",
-    "django_synergy.synergy_auth.apps.SynergyAuthConfig",
-    "django_synergy.synergy_libraries.apps.SynergyLibrariesConfig",
-    "django_synergy.cases.apps.CasesConfig",
-    "django_synergy.events.apps.EventsConfig",
-    "django_synergy.interpretation_libraries.apps.InterpretationLibrariesConfig",
-    "django_synergy.announcements.apps.AnnouncementsConfig",
-    "django_synergy.reporting.apps.ReportingConfig",
-    "django_synergy.audit_log.apps.AuditLogConfig"
+    "django_app.users.apps.UsersConfig",
+    "django_app.accounts.apps.AccountsConfig",
+    "django_app.devices.apps.DevicesConfig",
+    "django_app.notifications.apps.NotificationsConfig",
+    "django_app.cases.apps.CasesConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -111,7 +103,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "django_synergy.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "django_app.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -156,11 +148,11 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django_synergy.utils.timezone.TimezoneMiddleware",
+    "django_app.utils.timezone.TimezoneMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_synergy.utils.session_timeout.SessionTimeoutMiddleware",
-    'django_synergy.audit_log.middleware.EasyAuditMiddleware',
+    "django_app.utils.session_timeout.SessionTimeoutMiddleware",
+    'django_app.audit_log.middleware.EasyAuditMiddleware',
 ]
 
 # STATIC
@@ -169,7 +161,7 @@ MIDDLEWARE = [
 STATIC_ROOT = str(ROOT_DIR("staticfiles"))
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = "/static/"
-CUSTOM_STATIC_ROOT = str(ROOT_DIR("django_synergy/static"))
+CUSTOM_STATIC_ROOT = str(ROOT_DIR("django_app/static"))
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [str(APPS_DIR.path("static"))]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
@@ -211,7 +203,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "django_synergy.utils.context_processors.settings_context",
+                "django_app.utils.context_processors.settings_context",
             ],
         },
     }
@@ -249,7 +241,7 @@ EMAIL_TIMEOUT = 5
 # Django Admin URL.
 ADMIN_URL = "admin/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("""Circadiance""", "circadiance@circadiance.com")]
+ADMINS = [("""DjangoApp""", "django_app@gmail.com")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 
@@ -312,9 +304,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "django_synergy.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "django_app.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "django_synergy.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "django_app.users.adapters.SocialAccountAdapter"
 
 
 # Your stuff...
@@ -326,7 +318,7 @@ REST_FRAMEWORK = {
     # 'rest_framework.authentication.BasicAuthentication',
     # 'rest_framework.authentication.SessionAuthentication',
     # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-    'django_synergy.utils.jwt_auth_backend.JSONWebCacheTokenAuthentication',
+    'django_app.utils.jwt_auth_backend.JSONWebCacheTokenAuthentication',
     # 'drf_jwt_2fa.authentication.Jwt2faAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': (
@@ -336,10 +328,10 @@ REST_FRAMEWORK = {
     'DATETIME_INPUT_FORMATS': ['%d-%m-%Y %H:%M:%S %z', '%d-%m-%Y'],
     'DATE_FORMAT': '%d-%b-%Y',
     'DATE_INPUT_FORMATS': ['%d-%m-%Y'],
-    'DEFAULT_PAGINATION_CLASS': 'django_synergy.utils.pagination.PageLimitPagination',
+    'DEFAULT_PAGINATION_CLASS': 'django_app.utils.pagination.PageLimitPagination',
     'PAGE_SIZE': 1000,
-    'DEFAULT_FILTER_BACKENDS': ('django_synergy.utils.filter_backend.CommonFilterBackend','rest_framework.filters.SearchFilter'),
-    'EXCEPTION_HANDLER': 'django_synergy.utils.exceptions.custom_exception_handler',
+    'DEFAULT_FILTER_BACKENDS': ('django_app.utils.filter_backend.CommonFilterBackend','rest_framework.filters.SearchFilter'),
+    'EXCEPTION_HANDLER': 'django_app.utils.exceptions.custom_exception_handler',
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
@@ -359,7 +351,7 @@ DJOSER = {
     'ACTIVATION_URL': '#/auth/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SERIALIZERS': {
-        'user': 'django_synergy.users.serializers.UserSerializer',
+        'user': 'django_app.users.serializers.UserSerializer',
     },
     'TOKEN_MODEL': None
 }
@@ -374,13 +366,13 @@ LANGUAGES = [
 ]
 
 JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER':'django_synergy.utils.custom_payload.jwt_response_payload_handler',
+    'JWT_RESPONSE_PAYLOAD_HANDLER':'django_app.utils.custom_payload.jwt_response_payload_handler',
     'JWT_EXPIRATION_DELTA': timedelta(days=1),
     'JWT_AUDIENCE': None,
     'JWT_ISSUER': None,
     'JWT_COOKIE_EXPIRY': timedelta(days=7),
 
-    'JWT_DECODE_HANDLER': 'django_synergy.utils.custom_payload.jwt_decode_handler',
+    'JWT_DECODE_HANDLER': 'django_app.utils.custom_payload.jwt_decode_handler',
 
     'JWT_REFRESH_TOKEN_EXPIRY': timedelta(days=7),
     'JWT_ALLOW_REFRESH': False,
@@ -410,41 +402,14 @@ JWT2FA_AUTH = {
     'AUTH_TOKEN_RETRY_WAIT_TIME': timedelta(seconds=2),
 
     # Function that sends the verification code to the user
-    'CODE_SENDER': 'django_synergy.synergy_auth.sending.send_verification_code_via_email',
+    'CODE_SENDER': 'django_app.app_auth.sending.send_verification_code_via_email',
 }
 
 NON_FIELD_ERRORS_KEY = 'messages'
 
-SYNERGY_CLOUD = {
-    'REMEMBER_THIS_DEVICE_EXPIRATION_TIME': timedelta(days=365)
-}
-
 INSTALLED_APPS += ["storages"]  # noqa F405
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
-AWS_ACCESS_KEY_ID = env("DJANGO_AWS_ACCESS_KEY_ID", default='AKIA5CTMJR3CA5I6IISW')
-# https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
-AWS_SECRET_ACCESS_KEY = env("DJANGO_AWS_SECRET_ACCESS_KEY", default='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')
-# https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
-AWS_STORAGE_BUCKET_NAME = env("DJANGO_AWS_STORAGE_BUCKET_NAME", default='circadiance')
-AWS_AUTO_CREATE_BUCKET = False
-AWS_QUERYSTRING_AUTH = False
 
-# AWS cache settings, don't change unless you know what you're doing:
-AWS_EXPIRY = 60 * 60 * 24 * 7
-control = 'max-age=%d, s-maxage=%d, must-revalidate' % (AWS_EXPIRY, AWS_EXPIRY)
-AWS_HEADERS = {
-    'Cache-Control': bytes(control, encoding='latin-1')
-}
-AWS_PRELOAD_METADATA = True
-INSTALLED_APPS = ['collectfast', ] + INSTALLED_APPS
-AWS_S3_REGION_NAME = env("DJANGO_AWS_S3_REGION_NAME", default='us-east-2')
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_DEFAULT_ACL = None
-
-
-DEVICE_IMPORT_KEY_PREFIX = "device_import/"
-EVENT_IMPORT_KEY_PREFIX = "event_import/"
-REPORT_KEY_PREFIX = "reports/"
 
 S3_ENVIRON = 'base'
 
